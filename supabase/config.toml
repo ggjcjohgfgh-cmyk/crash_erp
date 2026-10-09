@@ -1,0 +1,4 @@
+project_id = "crash-erp"
+
+[functions.payment-webhook]
+verify_jwt = false
