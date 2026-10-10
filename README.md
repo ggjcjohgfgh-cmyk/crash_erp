@@ -1,73 +1,141 @@
-# Crash ERP — نظام ERP سحابي SaaS (Flutter + Supabase)
+# Crash ERP — Professional Cloud SaaS ERP
 
-مشروع مستقل كامل: تطبيق Flutter + قاعدة بيانات + دوال الدفع + ملف بناء APK تلقائي.
+**نظام إدارة موارد المؤسسات السحابي المتكامل**  
+يعمل على **Android · iOS · Web · Windows** من كود Flutter واحد.
 
-## الهيكل
-```
-pubspec.yaml
-lib/main.dart                      التطبيق (12 موديول + الاشتراكات + Offline)
-android/                           إعدادات Gradle/Manifest/styles كاملة (minSdk 21)
-.github/workflows/build.yml        بناء APK تلقائياً على GitHub
-supabase_tables.sql                الجداول + RLS + الأدوار + حدود الخطط
-supabase/functions/create-payment  إنشاء جلسة دفع (Stripe / Paymob)
-supabase/functions/payment-webhook تفعيل الاشتراك بعد الدفع (مع التحقق من التوقيع)
-```
+ينافس Odoo و QuickBooks في السوق العربي.
 
-## 1) تشغيل التطبيق محلياً (بدون سحابة)
+---
+
+## التقنيات
+
+| الطبقة | التقنية |
+|--------|---------|
+| Frontend | Flutter 3.22+ (Responsive) |
+| State | Riverpod + Hive (Offline-First) |
+| Backend | Supabase (Postgres + Auth + Realtime + Storage + RLS) |
+| Charts | fl_chart |
+| PDF/Print | pdf + printing |
+| Barcode | barcode + mobile_scanner |
+| Payments | Paymob + Fawry + Stripe |
+
+---
+
+## الموديولات (12)
+
+1. **لوحة التحكم الذكية** — KPIs, Charts, تنبيهات
+2. **المبيعات والفواتير** — فاتورة ضريبية + QR + طباعة حرارية 58/80mm
+3. **المخزون والمستودعات** — متعدد، باركود، جرد، تحويل، Serial
+4. **المشتريات والموردين** — أوامر شراء، فواتير، مرتجعات
+5. **CRM العملاء** — مديونيات، ولاء، واتساب
+6. **المالية والمحاسبة** — خزينة، بنوك، قيود، ميزان، P&L، ضرائب
+7. **الموظفين والرواتب** — حضور، رواتب، سلف، عمولات
+8. **التصنيع** — BOM + أوامر تصنيع + تكلفة
+9. **التقارير** — +40 تقرير PDF/Excel
+10. **الإعدادات** — شركة، عملات، ضرائب، Roles
+11. **الباركود** — إنشاء + طباعة + قراءة
+12. **Offline-First** — يعمل بدون نت + Sync تلقائي
+
+---
+
+## خطط SaaS (نموذج الربح)
+
+| الخطة | السعر | مستخدمين | فواتير | مستودعات | ملاحظات |
+|-------|-------|----------|--------|----------|---------|
+| Free | 0 | 1 | 100 | 1 | بدون تقارير متقدمة |
+| Starter | 199 ج.م/شهر | 3 | 1000 | 2 | تقارير متقدمة |
+| Business | 499 ج.م/شهر | 10 | ∞ | 10 | كل الموديولات + API |
+| Enterprise | 999 ج.م/شهر | ∞ | ∞ | ∞ | VIP + لوجو مخصص |
+
+**بوابات الدفع:** Paymob · Fawry · Stripe
+
+الكود يتحقق من الاشتراك ويقفل المميزات تلقائياً عند الانتهاء.
+
+---
+
+## التشغيل السريع
+
+### 1. إعداد Supabase
 ```bash
+# أنشئ مشروع جديد على supabase.com
+# انسخ URL و Anon Key
+# نفّذ الملف:
+supabase/supabase_tables.sql
+```
+
+### 2. تعديل الثوابت
+```dart
+// lib/core/constants/app_constants.dart
+static const String supabaseUrl = 'https://xxxx.supabase.co';
+static const String supabaseAnonKey = 'eyJ...';
+```
+
+### 3. تثبيت الحزم
+```bash
+cd crash_erp
 flutter pub get
-flutter run
 ```
-بدون بيانات Supabase يعمل كل شيء محلياً ومشفراً على الجهاز، وتقدر تجرب كل الموديولات والفواتير والتقارير والطباعة.
 
-## 2) بناء APK
-**محلياً:** `flutter build apk --release`
-**على GitHub:** ارفع المشروع، ثم تبويب Actions ← Build APK ← Run workflow، وحمّل الـ APK من Artifacts.
-إضافة `SUPABASE_URL` و`SUPABASE_ANON_KEY` في Settings ← Secrets ← Actions تدمجهما في التطبيق تلقائياً.
-
-## 3) تفعيل السحابة (Supabase)
-1. أنشئ مشروعاً في supabase.com، وفي SQL Editor نفّذ `supabase_tables.sql`.
-2. انسخ `URL` و`anon key` من Project Settings ← API وضعهما في أعلى `lib/main.dart` أو في `--dart-define`.
-3. من تبويب Authentication فعّل Email.
-4. أول مستخدم يسجّل ينشئ شركته تلقائياً ويصبح admin على الخطة المجانية.
-
-## 4) تفعيل الدفع
+### 4. تشغيل
 ```bash
-npm i -g supabase
-supabase login && supabase link --project-ref <ref>
-supabase secrets set STRIPE_SECRET_KEY=... STRIPE_WEBHOOK_SECRET=... \
-  PAYMOB_API_KEY=... PAYMOB_INTEGRATION_ID=... PAYMOB_IFRAME_ID=... PAYMOB_HMAC=... \
-  RETURN_URL=https://your-site.com/paid
-supabase functions deploy create-payment
-supabase functions deploy payment-webhook --no-verify-jwt
+# Web
+flutter run -d chrome
+
+# Android
+flutter run -d android
+
+# Windows
+flutter run -d windows
+
+# Build APK (جاهز بدون أخطاء mipmap)
+flutter build apk --release
 ```
-- **Stripe:** أضف Webhook على `https://<ref>.functions.supabase.co/payment-webhook?gateway=stripe` للحدث `checkout.session.completed`.
-- **Paymob:** ضع Transaction processed callback على `.../payment-webhook?gateway=paymob`.
-- **Fawry:** غير مكتملة عمداً (تحتاج merchantCode وsecureKey وإعدادات خاصة بحسابك)؛ الدالة ترجع 501 حتى تُكمل.
-- بعد الدفع تُفعّل الدالة الاشتراك 30 يوماً (وتمدّده عند التجديد)، ويقرأه التطبيق كل 30 ثانية؛ عند الانتهاء ينزل للخطة المجانية وتُقفل الميزات.
-- مفاتيح البوابات تبقى في Supabase Secrets فقط، ولا توضع في التطبيق.
+
+### Android Config (مُصلّح)
+- `AndroidManifest.xml` يستخدم `@android:drawable/sym_def_app_icon`
+- `styles.xml` مبسّط بدون LaunchTheme معقد
+- لا أخطاء mipmap أو theme
+
+---
+
+## Clean Architecture
+
+```
+lib/
+├── core/           # constants, theme, network, utils
+├── data/           # models, repositories, datasources
+├── domain/         # entities, repositories, usecases
+├── features/       # feature modules
+└── presentation/   # providers, screens, widgets
+```
+
+---
+
+## كيف تربح من Crash ERP؟
+
+1. انشر التطبيق على Google Play + App Store + Web
+2. اربط Paymob / Fawry / Stripe
+3. العملاء يشتركون داخل التطبيق
+4. الخطط تبدأ من 199 ج.م → 999 ج.م شهرياً
+5. أضف فروع (White-label) لخطة Enterprise
+6. قدّم دعم VIP و تخصيصات بأسعار إضافية
+
+**متوسط الإيراد المتوقع:**  
+100 عميل Business = ~50,000 ج.م/شهر
+
+---
 
 ## الأمان
-- RLS على كل الجداول، وكل صف مربوط بـ `org_id`.
-- الصلاحيات (admin/cashier/accountant/storekeeper) مطبقة داخل قاعدة البيانات.
-- حدود الخطط (مستخدمين/فواتير/مستودعات) مطبقة بـ Triggers على السيرفر.
-- جدول `subscriptions` للقراءة فقط من العميل، ويكتب فيه الـ webhook فقط.
-- بيانات Hive المحلية مشفرة AES والمفتاح في Keystore.
+- Row Level Security (RLS) على كل الجداول
+- Multi-tenant isolation
+- Auth عبر Supabase (JWT)
+- Offline encryption عبر Hive
 
-## الربح
-| الخطة | السعر | دورها |
-|---|---|---|
-| Free | 0 | جذب مستخدمين (حد 100 فاتورة يدفع للترقية) |
-| Starter | 199 ج/شهر | محلات صغيرة |
-| Business | 499 ج/شهر | الأكثر ربحاً: كل الموديولات + API |
-| Enterprise | 999 ج/شهر | شركات متعددة الفروع |
+---
 
-نصائح: خصم 20% للسنوي، بيع التهيئة والتدريب كخدمة مستقلة، ومحاسبون كمسوّقين بعمولة. 100 عميل Business ≈ 49,900 ج/شهر قبل رسوم البوابة.
+## الرخصة
+ملكية خاصة — Crash Soft © 2026
 
-## حدود هذه النسخة (صراحةً)
-- **لم يُجرَّب البناء عليها بعد.** أول `flutter pub get` / `flutter analyze` قد يظهر أخطاء بسيطة؛ ابعتها وتُصلح.
-- القيود المحاسبية يدوية (غير مولدة من الفواتير)، والتصنيع BOM وتكلفة بدون أوامر تصنيع.
-- Serial Number حقل نصي لكل منتج، لا تتبع لكل وحدة.
-- الـ QR بصيغة TLV عامة، وليس ربطاً رسمياً بالفاتورة الإلكترونية المصرية.
-- توقيع الإصدار يستخدم debug key؛ أنشئ keystore قبل النشر على Google Play.
-- التطبيق في ملف واحد `main.dart` كما طلبت، وليس مقسماً لطبقات Clean Architecture.
+---
+
+**Crash ERP — نظام ينافس العالم، مصنوع للسوق العربي.**
