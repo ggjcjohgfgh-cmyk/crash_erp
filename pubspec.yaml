@@ -1,23 +1,31 @@
 name: crash_erp
-description: Crash ERP Pro
+description: Crash ERP - Professional Cloud SaaS ERP System (Android, iOS, Web, Windows)
 publish_to: 'none'
 version: 1.0.0+1
 
 environment:
-  sdk: '>=3.2.0 <4.0.0'
+  sdk: '>=3.3.0 <4.0.0'
 
 dependencies:
   flutter:
     sdk: flutter
-  cupertino_icons: ^1.0.5
-  fl_chart: ^0.65.0
-  shared_preferences: ^2.2.1
-  intl: ^0.18.1
-
-dev_dependencies:
-  flutter_test:
+  flutter_localizations:
     sdk: flutter
-  flutter_lints: ^2.5.0
 
-flutter:
-  uses-material-design: true
+  # State Management
+  flutter_riverpod: ^2.5.1
+  riverpod_annotation: ^2.3.5
+
+  # Supabase
+  supabase_flutter: ^2.5.6
+
+  # Offline / Local Storage
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+  path_provider: ^2.1.3
+  connectivity_plus: ^6.0.3
+
+  # UI & Charts
+  fl_chart: ^0.68.0
+
+  # fonts: (optional - add Cairo fonts later for Arabic)
