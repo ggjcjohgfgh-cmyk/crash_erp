@@ -1,5 +1,12 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+Future<void> initSupabase() async {
+  await Supabase.initialize(
+    url: 'https://zpfpgqygxibptowssilx.supabase.co',
+    anonKey: 'sb_publishable_57I6BzIToWMO5EsiC4tbQg_aegxpBYG',
+  );
+}
+
 class SupabaseService {
   static SupabaseClient get client => Supabase.instance.client;
 
@@ -9,5 +16,5 @@ class SupabaseService {
 
   static SupabaseStorageClient get storage => client.storage;
 
-  static PostgrestQueryBuilder from(String table) => client.from(table);
+  static dynamic from(String table) => client.from(table);
 }
