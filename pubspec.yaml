@@ -28,4 +28,21 @@ dependencies:
   # UI & Charts
   fl_chart: ^0.68.0
 
-  # fonts: (optional - add Cairo fonts later for Arabic)
+  # Fonts & Utils - تمت الإضافة
+  google_fonts: ^6.1.0
+  shared_preferences: ^2.2.2
+  intl: ^0.19.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+  build_runner: ^2.4.11
+  riverpod_generator: ^2.4.0
+  custom_lint: ^0.6.2
+  riverpod_lint: ^2.3.11
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/fonts/
