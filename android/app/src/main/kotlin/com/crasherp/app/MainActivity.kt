@@ -1,0 +1,5 @@
+package com.crasherp.app
+
+import io.flutter.embedding.android.FlutterActivity
+
+class MainActivity: FlutterActivity()
