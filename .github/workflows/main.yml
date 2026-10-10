@@ -1,5 +1,5 @@
 name: Build APK
-on: [push, workflow_dispatch]
+on: [push]
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -8,10 +8,10 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.16.0'
-          channel: 'stable'
+          channel: stable
       - run: flutter pub get
       - run: flutter build apk --release
       - uses: actions/upload-artifact@v4
         with:
-          name: app-release
+          name: crash-erp-apk
           path: build/app/outputs/flutter-apk/app-release.apk
